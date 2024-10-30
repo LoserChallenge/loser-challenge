@@ -8,21 +8,18 @@ export default function Home() {
           Loser Challenge
         </h1>
         
-        {/* Test Version Notice */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8">
           <p className="text-center text-blue-800">
             Test Version
           </p>
         </div>
 
-        {/* Content will go here */}
         <div className="bg-white shadow rounded-lg p-6">
           <p className="text-center text-gray-600">
-            Loading game interface...
+            Coming Soon
           </p>
         </div>
 
-        {/* Disclaimer */}
         <footer className="mt-8 text-center text-sm text-gray-600">
           <p>
             This is an independent game for entertainment purposes only. 
