@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
+import { NFL_TEAMS } from '../../data/teams';
 
-// Test group data - we'll move this to a proper data store later
+// Test group data
 const TEST_PLAYERS = {
   'pr-test-8d4f2': {
     name: 'Paul Rusch',
@@ -31,20 +32,27 @@ const TEST_PLAYERS = {
   }
 };
 
-// Sample NFL teams data
-const NFL_TEAMS = [
-  { name: 'Minnesota Vikings', abbr: 'MIN', points: 32 },
-  { name: 'Kansas City Chiefs', abbr: 'KC', points: 31 },
-  { name: 'Detroit Lions', abbr: 'DET', points: 30 },
-  // Add all teams...
-];
-
 export default function PlayerPage() {
   const router = useRouter();
   const { id } = router.query;
   const player = TEST_PLAYERS[id];
   const [selectedEntry, setSelectedEntry] = useState('');
   const [selectedTeam, setSelectedTeam] = useState('');
+  const [submitMessage, setSubmitMessage] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if ((!selectedEntry && player.entries.length > 1) || !selectedTeam) {
+      setSubmitMessage('Please select both entry and team');
+      return;
+    }
+    
+    const entryId = player.entries.length > 1 ? selectedEntry : player.entries[0].id;
+    const team = NFL_TEAMS.find(t => t.abbr === selectedTeam);
+    
+    setSubmitMessage(`Test Pick Submitted: ${team.name} (${team.points} points)`);
+    // In the future, this will save to a database
+  };
 
   if (!player) {
     return (
@@ -63,11 +71,11 @@ export default function PlayerPage() {
         {/* Player Header */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <h1 className="text-2xl font-bold text-gray-800">{player.name}'s Picks</h1>
-          <p className="text-gray-600">Test Version</p>
+          <p className="text-gray-600">Week 8 - Test Version</p>
         </div>
 
         {/* Pick Submission Form */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <h2 className="text-xl font-bold mb-4">Submit Your Pick</h2>
           
           {/* Entry Selection (only for multiple entries) */}
@@ -110,12 +118,20 @@ export default function PlayerPage() {
 
           {/* Submit Button */}
           <button
+            type="submit"
             className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 disabled:bg-gray-300"
             disabled={(!selectedEntry && player.entries.length > 1) || !selectedTeam}
           >
             Submit Pick
           </button>
-        </div>
+
+          {/* Submission Message */}
+          {submitMessage && (
+            <div className="mt-4 p-4 bg-green-50 text-green-800 rounded-md">
+              {submitMessage}
+            </div>
+          )}
+        </form>
 
         {/* Current Picks Summary */}
         <div className="bg-white rounded-lg shadow-sm p-6">
