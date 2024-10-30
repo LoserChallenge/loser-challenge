@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { NFL_TEAMS } from '../../data/teams';
 
@@ -33,19 +33,25 @@ const TEST_PLAYERS = {
 
 export default function PlayerPage() {
   const router = useRouter();
-  const { id } = router.query;
-  const [player, setPlayer] = useState(TEST_PLAYERS[id]);
+  const [playerData, setPlayerData] = useState(null);
   const [selectedEntry, setSelectedEntry] = useState('');
   const [selectedTeam, setSelectedTeam] = useState('');
   const [submittedPicks, setSubmittedPicks] = useState({});
 
+  useEffect(() => {
+    if (router.query.id) {
+      const player = TEST_PLAYERS[router.query.id];
+      setPlayerData(player);
+    }
+  }, [router.query.id]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if ((!selectedEntry && player.entries.length > 1) || !selectedTeam) {
+    if ((!selectedEntry && playerData.entries.length > 1) || !selectedTeam) {
       return;
     }
     
-    const entryId = player.entries.length > 1 ? selectedEntry : player.entries[0].id;
+    const entryId = playerData.entries.length > 1 ? selectedEntry : playerData.entries[0].id;
     const team = NFL_TEAMS.find(t => t.abbr === selectedTeam);
     
     // Update submitted picks
@@ -61,12 +67,12 @@ export default function PlayerPage() {
 
     // Clear selection
     setSelectedTeam('');
-    if (player.entries.length > 1) {
+    if (playerData.entries.length > 1) {
       setSelectedEntry('');
     }
   };
 
-  if (!player) {
+  if (!playerData) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -82,7 +88,7 @@ export default function PlayerPage() {
       <div className="max-w-4xl mx-auto py-8 px-4">
         {/* Player Header */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">{player.name}'s Picks</h1>
+          <h1 className="text-2xl font-bold text-gray-800">{playerData.name}'s Picks</h1>
           <p className="text-gray-600">Week 8</p>
         </div>
 
@@ -91,7 +97,7 @@ export default function PlayerPage() {
           <h2 className="text-xl font-bold mb-4">Submit Your Pick</h2>
           
           {/* Entry Selection */}
-          {player.entries.length > 1 && (
+          {playerData.entries.length > 1 && (
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Select Entry
@@ -102,7 +108,7 @@ export default function PlayerPage() {
                 onChange={(e) => setSelectedEntry(e.target.value)}
               >
                 <option value="">Choose entry...</option>
-                {player.entries.map(entry => (
+                {playerData.entries.map(entry => (
                   <option key={entry.id} value={entry.id}>
                     {entry.name} 
                     {submittedPicks[entry.id] && ` (Current: ${submittedPicks[entry.id].team})`}
@@ -135,7 +141,7 @@ export default function PlayerPage() {
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 disabled:bg-gray-300"
-            disabled={(!selectedEntry && player.entries.length > 1) || !selectedTeam}
+            disabled={(!selectedEntry && playerData.entries.length > 1) || !selectedTeam}
           >
             Submit Pick
           </button>
@@ -144,7 +150,7 @@ export default function PlayerPage() {
         {/* Current Picks Summary */}
         <div className="bg-white rounded-lg shadow-sm p-6">
           <h2 className="text-xl font-bold mb-4">Current Picks</h2>
-          {player.entries.map(entry => (
+          {playerData.entries.map(entry => (
             <div key={entry.id} className="flex justify-between py-2 border-b last:border-0">
               <span>{entry.name}</span>
               {submittedPicks[entry.id] ? (
