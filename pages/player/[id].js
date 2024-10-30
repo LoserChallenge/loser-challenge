@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { NFL_TEAMS } from '../../data/teams';
 
-// Test group data
 const TEST_PLAYERS = {
   'pr-test-8d4f2': {
     name: 'Paul Rusch',
@@ -35,23 +34,36 @@ const TEST_PLAYERS = {
 export default function PlayerPage() {
   const router = useRouter();
   const { id } = router.query;
-  const player = TEST_PLAYERS[id];
+  const [player, setPlayer] = useState(TEST_PLAYERS[id]);
   const [selectedEntry, setSelectedEntry] = useState('');
   const [selectedTeam, setSelectedTeam] = useState('');
-  const [submitMessage, setSubmitMessage] = useState('');
+  const [submittedPicks, setSubmittedPicks] = useState({});
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if ((!selectedEntry && player.entries.length > 1) || !selectedTeam) {
-      setSubmitMessage('Please select both entry and team');
       return;
     }
     
     const entryId = player.entries.length > 1 ? selectedEntry : player.entries[0].id;
     const team = NFL_TEAMS.find(t => t.abbr === selectedTeam);
     
-    setSubmitMessage(`Test Pick Submitted: ${team.name} (${team.points} points)`);
-    // In the future, this will save to a database
+    // Update submitted picks
+    const newSubmittedPicks = {
+      ...submittedPicks,
+      [entryId]: {
+        team: team.name,
+        points: team.points,
+        timestamp: new Date().toLocaleTimeString()
+      }
+    };
+    setSubmittedPicks(newSubmittedPicks);
+
+    // Clear selection
+    setSelectedTeam('');
+    if (player.entries.length > 1) {
+      setSelectedEntry('');
+    }
   };
 
   if (!player) {
@@ -71,14 +83,14 @@ export default function PlayerPage() {
         {/* Player Header */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <h1 className="text-2xl font-bold text-gray-800">{player.name}'s Picks</h1>
-          <p className="text-gray-600">Week 8 - Test Version</p>
+          <p className="text-gray-600">Week 8</p>
         </div>
 
         {/* Pick Submission Form */}
         <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <h2 className="text-xl font-bold mb-4">Submit Your Pick</h2>
           
-          {/* Entry Selection (only for multiple entries) */}
+          {/* Entry Selection */}
           {player.entries.length > 1 && (
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -91,7 +103,10 @@ export default function PlayerPage() {
               >
                 <option value="">Choose entry...</option>
                 {player.entries.map(entry => (
-                  <option key={entry.id} value={entry.id}>{entry.name}</option>
+                  <option key={entry.id} value={entry.id}>
+                    {entry.name} 
+                    {submittedPicks[entry.id] && ` (Current: ${submittedPicks[entry.id].team})`}
+                  </option>
                 ))}
               </select>
             </div>
@@ -124,13 +139,6 @@ export default function PlayerPage() {
           >
             Submit Pick
           </button>
-
-          {/* Submission Message */}
-          {submitMessage && (
-            <div className="mt-4 p-4 bg-green-50 text-green-800 rounded-md">
-              {submitMessage}
-            </div>
-          )}
         </form>
 
         {/* Current Picks Summary */}
@@ -139,27 +147,21 @@ export default function PlayerPage() {
           {player.entries.map(entry => (
             <div key={entry.id} className="flex justify-between py-2 border-b last:border-0">
               <span>{entry.name}</span>
-              <span className="text-gray-600">
-                {entry.currentPick || 'No pick submitted'}
-              </span>
+              {submittedPicks[entry.id] ? (
+                <div className="text-right">
+                  <span className="text-green-600 font-medium">
+                    {submittedPicks[entry.id].team} ({submittedPicks[entry.id].points} pts)
+                  </span>
+                  <div className="text-xs text-gray-500">
+                    Submitted at {submittedPicks[entry.id].timestamp}
+                  </div>
+                </div>
+              ) : (
+                <span className="text-gray-600">No pick submitted</span>
+              )}
             </div>
           ))}
         </div>
-
-        {/* Test Version Notice */}
-        <div className="mt-6 bg-yellow-50 rounded-lg p-4">
-          <p className="text-sm text-yellow-800">
-            This is a test version. Picks submitted here won't affect the actual game.
-          </p>
-        </div>
-
-        {/* Disclaimer */}
-        <footer className="mt-8 text-center text-sm text-gray-600">
-          <p>
-            This is an independent game for entertainment purposes only. 
-            Not affiliated with, endorsed, or sponsored by the NFL or any NFL teams.
-          </p>
-        </footer>
       </div>
     </div>
   );
