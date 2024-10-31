@@ -13,162 +13,57 @@ export default function HomePage() {
         { pick: 'WAS', points: 26 },
         { pick: 'TB', points: 25 }
       ],
-      total: 151
-    },
-    'dm': {
-      playerName: 'Dan McCarley',
-      weeks: [
-        { pick: 'NYJ', points: 18 },
-        { pick: 'CIN', points: 24 },
-        { pick: 'JAX', points: 16 },
-        { pick: 'JAX', points: 16 },
-        { pick: 'NYJ', points: 18 },
-        { pick: 'NO', points: 19 },
-        { pick: 'SEA', points: 11 }
-      ],
-      total: 100
-    },
-    'pr2': {
-      playerName: 'Paul Rusch (#2)',
-      weeks: [
-        { pick: 'LAR', points: 18 },
-        { pick: 'DET', points: 15 },
-        { pick: 'LAR', points: -9.5 },
-        { pick: 'PHI', points: 28 },
-        { pick: 'HOU', points: -14 },
-        { pick: 'SEA', points: 22 },
-        { pick: 'HOU', points: 28 }
-      ],
-      total: 87.5
-    },
-    'pd': {
-      playerName: 'Phil Defigh',
-      weeks: [
-        { pick: 'LAR', points: 18 },
-        { pick: 'CIN', points: 24 },
-        { pick: 'JAX', points: 16 },
-        { pick: 'JAX', points: 16 },
-        { pick: 'AZ', points: -4 },
-        { pick: 'WAS', points: 26 },
-        { pick: 'SEA', points: -11 }
-      ],
-      total: 85
-    },
-    'fm': {
-      playerName: 'Fly McMarty',
-      weeks: [
-        { pick: 'WAS', points: 18 },
-        { pick: 'CIN', points: 5 },
-        { pick: '-', points: -15 },
-        { pick: 'BUF', points: 16 },
-        { pick: '-', points: 18 },
-        { pick: 'WAS', points: 26 },
-        { pick: '-', points: -11 }
-      ],
-      total: 70.5
-    },
-    'ea': {
-      playerName: 'Erika Arthun',
-      weeks: [
-        { pick: 'GB', points: 25 },
-        { pick: 'GB', points: -12.5 },
-        { pick: '-', points: -10 },
-        { pick: 'GB', points: 25 },
-        { pick: '-', points: -8 },
-        { pick: 'WAS', points: -14.5 },
-        { pick: 'HOU', points: 28 }
-      ],
-      total: 38
+      total: 151,
+      isLastLoserActive: true
     }
-  };
-
-  const [expandedPlayer, setExpandedPlayer] = useState(null);
-
-  const determinePickStatus = (weeks, currentWeekIndex) => {
-    const hadPreviousIncorrectPick = weeks.slice(0, currentWeekIndex).some(week => week.points < 0);
-    if (weeks[currentWeekIndex].points < 0) return 'incorrect';
-    if (!hadPreviousIncorrectPick) return 'streak';
-    return 'correct';
-  };
-
-  const getActiveStreak = (weeks) => {
-    let streakCount = 0;
-    for (let week of weeks) {
-      if (week.points > 0) streakCount++;
-      else break;
-    }
-    return streakCount;
+    // For now let's just show one player to match the example
   };
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-2xl font-bold mb-8 text-center">Loser Challenge Standings</h1>
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-6 text-center">Loser Challenge Standings</h1>
         
-        <div className="space-y-4">
-          {Object.entries(TEST_GROUP_DATA)
-            .sort(([,a], [,b]) => b.total - a.total)
-            .map(([id, player], rank) => (
-              <div key={id} className="bg-white rounded-lg shadow">
-                <div 
-                  className="p-6 cursor-pointer"
-                  onClick={() => setExpandedPlayer(expandedPlayer === id ? null : id)}
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="flex items-center gap-4">
-                      <span className="text-xl text-gray-400">#{rank + 1}</span>
-                      <div>
-                        <h2 className="text-lg font-bold">{player.playerName}</h2>
-                        <div className="flex items-center gap-3 mt-1">
-                          <span className="text-gray-600">
-                            Total Points: <span className="font-bold">{player.total}</span>
+        {Object.entries(TEST_GROUP_DATA)
+          .map(([id, player], rank) => (
+            <div key={id} className="bg-white rounded-lg shadow-sm">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-4">
+                    <span className="text-2xl text-gray-400 font-semibold">#{rank + 1}</span>
+                    <div>
+                      <h2 className="text-xl font-bold">{player.playerName}</h2>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-gray-600">Total Points:</span>
+                        <span className="font-semibold">{player.total}</span>
+                        {player.isLastLoserActive && (
+                          <span className="text-green-700 bg-green-50 px-3 py-0.5 rounded-full text-sm">
+                            Last Loser Active
                           </span>
-                          {getActiveStreak(player.weeks) > 0 && (
-                            <span className="text-sm text-green-700 bg-green-50 px-3 py-1 rounded-full">
-                              Last Loser Active
-                            </span>
-                          )}
-                        </div>
+                        )}
                       </div>
                     </div>
-                    <button className="text-gray-400 text-xl">
-                      {expandedPlayer === id ? '↑' : '↓'}
-                    </button>
                   </div>
                 </div>
 
-                {expandedPlayer === id && (
-                  <div className="border-t border-gray-100 p-6">
-                    <div className="space-y-4">
-                      {player.weeks.map((week, idx) => {
-                        const status = determinePickStatus(player.weeks, idx);
-                        return (
-                          <div key={idx} className="flex justify-between items-center">
-                            <span className="text-gray-600">Week {idx + 1}</span>
-                            <div className="flex items-center gap-3">
-                              <span className={`
-                                px-3 py-1 rounded-lg
-                                ${status === 'streak' ? 'bg-green-50 text-green-700' : ''}
-                                ${status === 'incorrect' ? 'text-red-600' : ''}
-                                ${status === 'correct' ? 'text-blue-600' : ''}
-                              `}>
-                                {week.pick} ({week.points > 0 ? '+' : ''}{week.points})
-                              </span>
-                              {status === 'streak' && (
-                                <span className="text-xs bg-green-50 text-green-700 px-2 py-1 rounded">
-                                  LL
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
+                <div className="space-y-3">
+                  {player.weeks.map((week, idx) => (
+                    <div key={idx} className="flex justify-between items-center">
+                      <span className="text-gray-600">Week {idx + 1}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="bg-green-50 text-green-700 px-3 py-1 rounded-lg font-medium">
+                          {week.pick} ({week.points > 0 ? '+' : ''}{week.points})
+                        </span>
+                        <span className="bg-green-50 text-green-700 px-2 py-1 rounded text-sm">
+                          LL
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  ))}
+                </div>
               </div>
-            ))}
-        </div>
+            </div>
+          ))}
       </div>
     </div>
   );
