@@ -1,76 +1,92 @@
 import React from 'react';
+import Link from 'next/link';
+
+const PICK_OF_THE_WEEK = [
+  { week: 1, pick: 'BAL', points: 30 },
+  { week: 2, pick: 'SF', points: 31 },
+  { week: 3, pick: 'SF', points: 31 },
+  { week: 4, pick: 'PHI', points: 28 },
+  { week: 5, pick: 'BUF', points: 29 },
+  { week: 6, pick: 'WAS', points: 26 },
+  { week: 7, pick: 'MIN', points: 32 }
+];
 
 const TEST_GROUP_DATA = {
-  // Paul Rusch entries
-  'Paul Rusch (#1)': {
+  'pr-test-8d4f2': {
+    playerName: 'Paul Rusch (#1)',
     weeks: [
-      { week: 1, pick: 'BAL', points: 19 },
-      { week: 2, pick: 'CIN', points: 24, isEligible: true },
-      { week: 3, pick: 'JAX', points: 22, isEligible: true },
-      { week: 4, pick: 'LAC', points: 15 },
-      { week: 5, pick: 'NYJ', points: 19 },
-      { week: 6, pick: 'WAS', points: 26, isEligible: true },
-      { week: 7, pick: 'TB', points: 25 }
+      { pick: 'BAL', points: 19, isEligible: true },
+      { pick: 'CIN', points: 24, isEligible: true },
+      { pick: 'JAX', points: 22, isEligible: true },
+      { pick: 'LAC', points: 15, isEligible: true },
+      { pick: 'NYJ', points: 19, isEligible: true },
+      { pick: 'WAS', points: 26, isEligible: true },
+      { pick: 'TB', points: 25, isEligible: true }
     ],
     total: 151
   },
-  'Paul Rusch (#2)': {
+  'dm-test-9e3a7': {
+    playerName: 'Dan McCarley',
     weeks: [
-      { week: 1, pick: 'LAR', points: 18 },
-      { week: 2, pick: 'DET', points: 15 },
-      { week: 3, pick: 'LAR', points: -9.5 },
-      { week: 4, pick: 'PHI', points: 28 },
-      { week: 5, pick: 'HOU', points: -14 },
-      { week: 6, pick: 'SEA', points: 22 },
-      { week: 7, pick: 'HOU', points: 28 }
-    ],
-    total: 87.5
-  },
-  'Dan McCarley': {
-    weeks: [
-      { week: 1, pick: 'NYJ', points: 18 },
-      { week: 2, pick: 'CIN', points: 24 },
-      { week: 3, pick: 'JAX', points: 16 },
-      { week: 4, pick: 'JAX', points: 16 },
-      { week: 5, pick: 'NYJ', points: 18 },
-      { week: 6, pick: 'NO', points: 19 },
-      { week: 7, pick: 'SEA', points: 11 }
+      { pick: 'NYJ', points: 18 },
+      { pick: 'CIN', points: 24 },
+      { pick: 'JAX', points: 16 },
+      { pick: 'JAX', points: 16 },
+      { pick: 'NYJ', points: 18 },
+      { pick: 'NO', points: 19 },
+      { pick: 'SEA', points: 11 }
     ],
     total: 100
   },
-  'Fly McMarty': {
+  'pr2-test-8d4f2': {
+    playerName: 'Paul Rusch (#2)',
     weeks: [
-      { week: 1, pick: 'WAS', points: 18 },
-      { week: 2, pick: 'CIN', points: 5 },
-      { week: 3, pick: null, points: -15 },
-      { week: 4, pick: 'BUF', points: 16 },
-      { week: 5, pick: null, points: 18 },
-      { week: 6, pick: 'WAS', points: 26 },
-      { week: 7, pick: null, points: -11 }
+      { pick: 'LAR', points: 18 },
+      { pick: 'DET', points: 15 },
+      { pick: 'LAR', points: -9.5 },
+      { pick: 'PHI', points: 28 },
+      { pick: 'HOU', points: -14 },
+      { pick: 'SEA', points: 22 },
+      { pick: 'HOU', points: 28 }
     ],
-    total: 70.5
+    total: 87.5
   },
-  'Phil Defigh': {
+  'pd-test-2c6b5': {
+    playerName: 'Phil Defigh',
     weeks: [
-      { week: 1, pick: 'LAR', points: 18 },
-      { week: 2, pick: 'CIN', points: 24 },
-      { week: 3, pick: 'JAX', points: 16 },
-      { week: 4, pick: 'JAX', points: 16 },
-      { week: 5, pick: 'AZ', points: -4 },
-      { week: 6, pick: 'WAS', points: 26 },
-      { week: 7, pick: 'SEA', points: -11 }
+      { pick: 'LAR', points: 18 },
+      { pick: 'CIN', points: 24 },
+      { pick: 'JAX', points: 16 },
+      { pick: 'JAX', points: 16 },
+      { pick: 'AZ', points: -4 },
+      { pick: 'WAS', points: 26 },
+      { pick: 'SEA', points: -11 }
     ],
     total: 85
   },
-  'Erika Arthun': {
+  'fm-test-9e3a8': {
+    playerName: 'Fly McMarty',
     weeks: [
-      { week: 1, pick: 'GB', points: 25 },
-      { week: 2, pick: 'GB', points: -12.5 },
-      { week: 3, pick: null, points: -10 },
-      { week: 4, pick: 'GB', points: 25 },
-      { week: 5, pick: null, points: -8 },
-      { week: 6, pick: 'WAS', points: -14.5 },
-      { week: 7, pick: 'HOU', points: 28 }
+      { pick: 'WAS', points: 18 },
+      { pick: 'CIN', points: 5 },
+      { pick: '-', points: -15 },
+      { pick: 'BUF', points: 16 },
+      { pick: '-', points: 18 },
+      { pick: 'WAS', points: 26 },
+      { pick: '-', points: -11 }
+    ],
+    total: 70.5
+  },
+  'ea-test-7h1k9': {
+    playerName: 'Erika Arthun',
+    weeks: [
+      { pick: 'GB', points: 25 },
+      { pick: 'GB', points: -12.5 },
+      { pick: '-', points: -10 },
+      { pick: 'GB', points: 25 },
+      { pick: '-', points: -8 },
+      { pick: 'WAS', points: -14.5 },
+      { pick: 'HOU', points: 28 }
     ],
     total: 38
   }
@@ -83,45 +99,58 @@ export default function StandingsPage() {
         <h1 className="text-2xl font-bold mb-6">Loser Challenge Standings</h1>
         
         <div className="bg-white rounded-lg shadow overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full">
+            <thead>
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Name
-                </th>
+                <th className="px-4 py-2 text-left border-b">Name</th>
                 {[1, 2, 3, 4, 5, 6, 7].map(week => (
-                  <th key={week} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th key={week} className="px-4 py-2 text-left border-b">
                     Week {week}
                   </th>
                 ))}
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Total
-                </th>
+                <th className="px-4 py-2 text-left border-b">Total</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody>
               {Object.entries(TEST_GROUP_DATA)
                 .sort(([,a], [,b]) => b.total - a.total)
-                .map(([name, data]) => (
-                <tr key={name}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {name}
+                .map(([id, player]) => (
+                <tr key={id} className="hover:bg-gray-50">
+                  <td className="px-4 py-2 border-b">
+                    <Link href={`/player/${id}`} className="text-blue-600 hover:underline">
+                      {player.playerName}
+                    </Link>
                   </td>
-                  {data.weeks.map((week, index) => (
-                    <td key={index} className="px-6 py-4 whitespace-nowrap">
-                      <div className={`text-sm ${week.isEligible ? 'font-bold' : ''} ${week.points < 0 ? 'text-red-600' : 'text-gray-900'}`}>
-                        {week.pick || '-'}
+                  {player.weeks.map((week, idx) => (
+                    <td key={idx} className="px-4 py-2 border-b">
+                      <div className={`
+                        ${week.isEligible ? 'font-bold' : ''}
+                      `}>
+                        {week.pick}
                       </div>
-                      <div className={`text-sm ${week.points < 0 ? 'text-red-600' : 'text-gray-500'}`}>
+                      <div className={`
+                        ${week.points < 0 ? 'text-red-600' : ''}
+                      `}>
                         {week.points}
                       </div>
                     </td>
                   ))}
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
-                    {data.total}
+                  <td className="px-4 py-2 border-b font-bold">
+                    {player.total}
                   </td>
                 </tr>
               ))}
+              {/* Pick of the Week Row */}
+              <tr className="bg-gray-100">
+                <td className="px-4 py-2 border-b font-bold">PICK OF THE WEEK</td>
+                {PICK_OF_THE_WEEK.map((week, idx) => (
+                  <td key={idx} className="px-4 py-2 border-b">
+                    <div>{week.pick}</div>
+                    <div>{week.points}</div>
+                  </td>
+                ))}
+                <td className="px-4 py-2 border-b">207</td>
+              </tr>
             </tbody>
           </table>
         </div>
